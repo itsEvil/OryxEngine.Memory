@@ -53,7 +53,7 @@ public class Tester {
         
         w.Write(char.MinValue);
         w.Write(char.MaxValue);
-        w.Write((char)128);
+        w.Write('A');
         
         PrintPosition(w);
         
@@ -193,7 +193,7 @@ public class Tester {
         
         Assert(char0, char.MinValue);
         Assert(char1, char.MaxValue);
-        Assert(char2, (char)128);
+        Assert(char2, 'A');
         
         Assert(thisIsAString, "This is a string");
         

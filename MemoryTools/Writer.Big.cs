@@ -25,12 +25,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a byte
     /// </summary>
-    public void Write(byte value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(byte value)
     {
         if (Position + ByteLen > Buffer.Length)
         {
             Position++;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         var buffer = Buffer.AsSpan();
@@ -40,19 +40,19 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a char
     /// </summary>
-    public void Write(char value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(char value)
     {
         if (Position + CharLen > Buffer.Length)
         {
             Position += CharLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
 
         Span<byte> bytes = stackalloc byte[CharLen];
         if (!BitConverter.TryWriteBytes(bytes, value)) {
             Position += CharLen;
-            var ex = new Exception($"Failed to write char bytes to span: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Failed to write char bytes to span: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -66,11 +66,11 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a bool
     /// </summary>
-    public void Write(bool value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(bool value)
     {
         if (Position + BoolLen > Buffer.Length) {
             Position++;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -82,12 +82,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a short
     /// </summary>
-    public void Write(short value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(short value)
     {
         if (Position + ShortLen > Buffer.Length)
         {
             Position += ShortLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -98,12 +98,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a ushort
     /// </summary>
-    public void Write(ushort value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(ushort value)
     {
         if (Position + ShortLen > Buffer.Length)
         {
             Position += ShortLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -114,12 +114,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a int
     /// </summary>
-    public void Write(int value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(int value)
     {
         if (Position + IntLen > Buffer.Length)
         {
             Position += IntLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
 
@@ -130,12 +130,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a uint
     /// </summary>
-    public void Write(uint value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(uint value)
     {
         if (Position + IntLen > Buffer.Length)
         {
             Position += IntLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -146,12 +146,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a long
     /// </summary>
-    public void Write(long value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(long value)
     {
         if (Position + LongLen > Buffer.Length)
         {
             Position += LongLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -162,12 +162,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a ulong
     /// </summary>
-    public void Write(ulong value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(ulong value)
     {
         if (Position + LongLen > Buffer.Length)
         {
             Position += LongLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -178,12 +178,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a float
     /// </summary>
-    public void Write(float value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(float value)
     {
         if (Position + FloatLen > Buffer.Length)
         {
             Position += FloatLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -193,7 +193,7 @@ public class WriterBig(byte[] buffer) : IWriter
         if (!BitConverter.TryWriteBytes(bytes, value))
         {
             Position += FloatLen;
-            var ex = new Exception($"Writer failed to write float {value} to span! {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer failed to write float {value} to span! {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -207,12 +207,12 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a double
     /// </summary>
-    public void Write(double value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(double value)
     {
         if (Position + DoubleLen > Buffer.Length)
         {
             Position += DoubleLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
 
@@ -221,7 +221,7 @@ public class WriterBig(byte[] buffer) : IWriter
         if (!BitConverter.TryWriteBytes(bytes, value))
         {
             Position += DoubleLen;
-            var ex = new Exception($"Writer failed to write double {value} to span! {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer failed to write double {value} to span! {Position}, {Buffer.Length}");
             throw ex;
         }
         
@@ -239,7 +239,7 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a string using ushort for length of the string
     /// </summary>
-    public void Write(string value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void Write(string value)
     {
         var bytes = Encoding.UTF8.GetBytes(value);
         Write((ushort)bytes.Length);
@@ -249,7 +249,7 @@ public class WriterBig(byte[] buffer) : IWriter
         if (Position + bytes.Length > Buffer.Length)
         {
             Position += bytes.Length;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
 
@@ -260,7 +260,7 @@ public class WriterBig(byte[] buffer) : IWriter
     /// <summary>
     /// Writes a string using int for the length of the string
     /// </summary>
-    public void WriteUtf16(string value, [CallerMemberName] string caller = "", [CallerFilePath] string path = "", [CallerLineNumber] int line = 0)
+    public void WriteUtf16(string value)
     {
         var bytes = Encoding.UTF8.GetBytes(value);
         Write(bytes.Length);
@@ -270,7 +270,7 @@ public class WriterBig(byte[] buffer) : IWriter
         if (Position + bytes.Length > Buffer.Length)
         {
             Position += bytes.Length;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length} via {caller} \n\t at {path} L.{line}");
+            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
 

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35521.163 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTools", "MemoryTools\MemoryTools.csproj", "{9CAA6884-F864-462B-95C0-5DD6259811EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTests", "MemoryTests\MemoryTests.csproj", "{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CAA6884-F864-462B-95C0-5DD6259811EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CAA6884-F864-462B-95C0-5DD6259811EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CAA6884-F864-462B-95C0-5DD6259811EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CAA6884-F864-462B-95C0-5DD6259811EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

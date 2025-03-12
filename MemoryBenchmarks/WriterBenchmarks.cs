@@ -3,6 +3,7 @@ using MemoryTools;
 
 namespace MemoryBenchmarks;
 
+[MemoryDiagnoser]
 public class Benchmarks
 {
     private static byte[] _data = new byte[0x10000];

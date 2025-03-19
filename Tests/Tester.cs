@@ -2,7 +2,8 @@
 using System.Text;
 using OryxEngine.Memory;
 
-namespace MemoryTests;
+// ReSharper disable once CheckNamespace
+namespace Tests;
 
 public class Tester {
     

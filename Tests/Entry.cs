@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 
-namespace MemoryTests;
+// ReSharper disable once CheckNamespace
+namespace Tests;
 
 public static class Entry {
     public static void Main(string[] args) {

@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace MemoryBenchmarks;
-
+namespace Benchmarks;
 public static class Entry {
     public static void Main(string[] args)
     { 

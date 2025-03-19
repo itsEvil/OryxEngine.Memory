@@ -5,9 +5,9 @@ VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memory", "Memory\Memory.csproj", "{9CAA6884-F864-462B-95C0-5DD6259811EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTests", "MemoryTests\MemoryTests.csproj", "{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{EA39C1F7-C1A0-4FE2-849B-B07F4718A70B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryBenchmarks", "MemoryBenchmarks\MemoryBenchmarks.csproj", "{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

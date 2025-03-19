@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
+        <RootNamespace>MemoryBenchmarks</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

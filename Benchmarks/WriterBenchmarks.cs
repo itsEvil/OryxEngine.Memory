@@ -1,7 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using OryxEngine.Memory;
 
-namespace MemoryBenchmarks;
+// ReSharper disable once CheckNamespace
+namespace Benchmarks;
 
 [MemoryDiagnoser]
 public class WriterBenchmarks

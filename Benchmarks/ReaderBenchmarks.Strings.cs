@@ -1,13 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
 using OryxEngine.Memory;
 
-namespace MemoryBenchmarks;
+// ReSharper disable once CheckNamespace
+namespace Benchmarks;
 
 [MemoryDiagnoser]
 public class ReaderBenchmarksStrings
 {
     private static byte[] _data = new byte[0x10000];
-    private static Reader _reader;
+    private static OryxEngine.Memory.Reader _reader;
     
     [Params(0, 1)]
     public EndianMode Mode; 
@@ -67,7 +68,7 @@ public class ReaderBenchmarksStrings
         
         w.WriteStringInt("This is a very easy test");
         w.WriteStringInt("This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test");
-        _reader = new Reader(Mode, _data);
+        _reader = new OryxEngine.Memory.Reader(Mode, _data);
     }
     
     [Benchmark]

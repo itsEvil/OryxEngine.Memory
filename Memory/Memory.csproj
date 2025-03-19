@@ -5,6 +5,20 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>MemoryTools</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>OryxEngine.Memory</PackageId>
+        <Title>Memory module for Oryx Engine</Title>
+        <Authors>itsEvil</Authors>
+        <Description>Used to write and read data from a byte buffer. Made in .NET 9</Description>
+        <Copyright>MIT License</Copyright>
+        <PackageProjectUrl>https://github.com/itsEvil/OryxEngine.Memory</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/itsEvil/OryxEngine.Memory</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>memory, oryx engine </PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>

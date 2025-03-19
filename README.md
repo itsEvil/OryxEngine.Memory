@@ -33,4 +33,6 @@ private static void Main(string[] args) {
 
     Console.WriteLine("Finished: {0}, {1}, {2}, {3}", intValue, ushortValue, reader.Position, reader.Buffer.Length);
 }
-``` 
+```
+
+Nuget Link: https://www.nuget.org/packages/OryxEngine.Memory/1.0.0

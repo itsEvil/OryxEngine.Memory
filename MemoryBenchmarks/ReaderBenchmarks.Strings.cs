@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using MemoryTools;
+using OryxEngine.Memory;
 
 namespace MemoryBenchmarks;
 

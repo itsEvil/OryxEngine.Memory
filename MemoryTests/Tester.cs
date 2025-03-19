@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.Marshalling;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
-using MemoryTools;
+using OryxEngine.Memory;
 
 namespace MemoryTests;
 

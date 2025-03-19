@@ -1,6 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace MemoryTools;
+﻿// ReSharper disable once CheckNamespace
+namespace OryxEngine.Memory;
 public interface IWriter
 {
     public byte[] Buffer { get; }

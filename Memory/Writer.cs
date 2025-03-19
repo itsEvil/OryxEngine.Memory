@@ -1,6 +1,5 @@
-using System.Runtime.CompilerServices;
-
-namespace MemoryTools;
+// ReSharper disable once CheckNamespace
+namespace OryxEngine.Memory;
 public class Writer(EndianMode mode, byte[] buffer) : IWriter
 {
     private readonly IWriter _writer = mode == EndianMode.Big ?

@@ -1,10 +1,8 @@
 using System.Buffers.Binary;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
-
-namespace MemoryTools;
-public sealed class ReaderLittle : IReader
+// ReSharper disable once CheckNamespace
+namespace OryxEngine.Memory;
+public sealed class ReaderBig : IReader 
 {
     private const int ByteLen = sizeof(byte);
     private const int BoolLen = sizeof(bool);
@@ -19,8 +17,7 @@ public sealed class ReaderLittle : IReader
     public int Length { get; private set; }
 
     public byte[] Buffer { get; }
-
-    public ReaderLittle(byte[] buffer)
+    public ReaderBig(byte[] buffer)
     {
         Buffer = buffer;
         Length = Buffer.Length;
@@ -34,10 +31,8 @@ public sealed class ReaderLittle : IReader
     {
         if (Position + ByteLen <= Length) 
             return Buffer[Position];
-        
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
         throw ex;
-
     }
     public byte ReadByte()
     {
@@ -48,27 +43,26 @@ public sealed class ReaderLittle : IReader
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
         throw ex;
     }
-    
     public bool ReadBoolean()
     {
-        if (Position + BoolLen <= Length) 
+        if (Position + BoolLen <= Length)
             return Buffer[Position++] == 1;
         
-        Position++;
+        
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
         throw ex;
     }
-
     public short ReadInt16()
     {
         if (Position + ShortLen > Length)
         {
             Position += ShortLen;
-            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
+            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}"); 
             throw ex;
         }
-
-        var data = BinaryPrimitives.ReadInt16LittleEndian(Buffer.AsSpan()[Position..(Position + ShortLen)]);
+        
+        var span = Buffer.AsSpan(Position, ShortLen);
+        var data = BinaryPrimitives.ReadInt16BigEndian(span);
         Position += ShortLen;
         return data;
     }
@@ -80,9 +74,8 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-
         var span = Buffer.AsSpan(Position, ShortLen);
-        var data = BinaryPrimitives.ReadUInt16LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt16BigEndian(span);
         Position += ShortLen;
         return data;
     }
@@ -94,9 +87,9 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-
-        var span = Buffer.AsSpan(Position,IntLen);
-        var data = BinaryPrimitives.ReadInt32LittleEndian(span);
+        
+        var span = Buffer.AsSpan(Position, IntLen);
+        var data = BinaryPrimitives.ReadInt32BigEndian(span);
         Position += IntLen;
         return data;
     }
@@ -108,9 +101,8 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-
         var span = Buffer.AsSpan(Position, IntLen);
-        var data = BinaryPrimitives.ReadUInt32LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt32BigEndian(span);
         Position += IntLen;
         return data;
     }
@@ -123,9 +115,8 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-
         var span = Buffer.AsSpan(Position, LongLen);
-        var data = BinaryPrimitives.ReadInt64LittleEndian(span);
+        var data = BinaryPrimitives.ReadInt64BigEndian(span);
         Position += LongLen;
         return data;
     }
@@ -138,9 +129,9 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-        
+
         var span = Buffer.AsSpan(Position, LongLen);
-        var data = BinaryPrimitives.ReadUInt64LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt64BigEndian(span);
         Position += LongLen;
         return data;
     }
@@ -153,9 +144,15 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-        
+
+        Span<byte> buf = stackalloc byte[FloatLen];
         var span = Buffer.AsSpan(Position, FloatLen);
-        var data = BitConverter.ToSingle(span);
+        buf[3] = span[0];
+        buf[2] = span[1];
+        buf[1] = span[2];
+        buf[0] = span[3];
+        
+        var data = BitConverter.ToSingle(buf);
         Position += FloatLen;
         return data;
     }
@@ -167,9 +164,19 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-        
+
+        Span<byte> buf = stackalloc byte[8];
         var span = Buffer.AsSpan(Position, DoubleLen);
-        var data = BitConverter.ToDouble(span);
+        buf[7] = span[0];
+        buf[6] = span[1];
+        buf[5] = span[2];
+        buf[4] = span[3];
+        buf[3] = span[4];
+        buf[2] = span[5];
+        buf[1] = span[6];
+        buf[0] = span[7];
+
+        var data = BitConverter.ToDouble(buf);
         Position += DoubleLen;
         return data;
     }
@@ -183,7 +190,7 @@ public sealed class ReaderLittle : IReader
         
         if (length == 0)
             return "";
-
+        
         var r = Encoding.UTF8.GetString(Buffer, Position, length);
         Position += length;
         return r;
@@ -200,7 +207,7 @@ public sealed class ReaderLittle : IReader
         throw new ArgumentOutOfRangeException($"Reader failed to get chars at: {Position}, written chars: {written}, length: {length}");
     }
     /// <summary>
-    /// Reads a string using ushort for length of the string
+    /// Reads a string using int for length of the string
     /// </summary>
     public string ReadStringInt() {
         var length = ReadInt32();

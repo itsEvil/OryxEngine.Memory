@@ -1,8 +1,8 @@
 using System.Buffers.Binary;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace MemoryTools;
+// ReSharper disable once CheckNamespace
+namespace OryxEngine.Memory;
 public class WriterLittle(byte[] buffer) : IWriter
 {
     private const int ByteLen = sizeof(byte);

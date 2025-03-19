@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MemoryTools\MemoryTools.csproj" />
+      <ProjectReference Include="..\Memory\Memory.csproj" />
     </ItemGroup>
 
 </Project>

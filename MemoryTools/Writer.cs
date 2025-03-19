@@ -13,7 +13,6 @@ public class Writer(EndianMode mode, byte[] buffer) : IWriter
     public void SetPosition(int position) => _writer.SetPosition(position);
     public void Write(byte value) => _writer.Write(value);
     public void Write(bool value) => _writer.Write(value);
-    public void Write(char value) => _writer.Write(value);
     public void Write(ushort value) => _writer.Write(value);
     public void Write(short value) => _writer.Write(value);
     public void Write(uint value) => _writer.Write(value);
@@ -22,6 +21,6 @@ public class Writer(EndianMode mode, byte[] buffer) : IWriter
     public void Write(double value) => _writer.Write(value);
     public void Write(ulong value) => _writer.Write(value);
     public void Write(long value) => _writer.Write(value);
-    public void Write(string value) => _writer.Write(value);
-    public void WriteUtf16(string value) => _writer.WriteUtf16(value);
+    public void WriteString(ReadOnlySpan<char> value) => _writer.WriteString(value);
+    public void WriteStringInt(ReadOnlySpan<char> value) => _writer.WriteStringInt(value);
 }

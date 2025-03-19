@@ -4,7 +4,7 @@ using MemoryTools;
 namespace MemoryBenchmarks;
 
 [MemoryDiagnoser]
-public class Benchmarks
+public class WriterBenchmarks
 {
     private static byte[] _data = new byte[0x10000];
     private static Writer _writer;
@@ -30,16 +30,6 @@ public class Benchmarks
         _writer.Reset();
         _writer.Write(true);
         _writer.Write(false);
-    }
-    
-    [Benchmark]
-    public void WriteChar() {
-        _writer.Reset();
-        _writer.Write(char.MaxValue);
-        _writer.Write(char.MinValue);
-        _writer.Write('A');
-        _writer.Write('X');
-        _writer.Write('Z');
     }
     
     [Benchmark]
@@ -112,7 +102,8 @@ public class Benchmarks
         _writer.Write(-10.1f);
     }
 
-    [Benchmark] public void WriteDouble() {
+    [Benchmark] 
+    public void WriteDouble() {
         _writer.Reset();
         _writer.Write(double.MaxValue);
         _writer.Write(double.MinValue);
@@ -122,15 +113,16 @@ public class Benchmarks
     }
     
     [Benchmark]
-    public void WriteStringShort() {
+    public void WriteString() {
         _writer.Reset();
-        _writer.Write("This is a very easy test");
-        _writer.Write("This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test");
+        _writer.WriteString("This is a very easy test"); //26
+        _writer.WriteString("This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test"); //130?
     }
 
-    [Benchmark] public void WriteStringInt() {
+    [Benchmark] 
+    public void WriteStringInt() {
         _writer.Reset();
-        _writer.WriteUtf16("This is a very easy test");
-        _writer.WriteUtf16("This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test");
+        _writer.WriteStringInt("This is a very easy test");
+        _writer.WriteStringInt("This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test, This is a very easy test");
     }
 }

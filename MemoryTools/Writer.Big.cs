@@ -37,31 +37,29 @@ public class WriterBig(byte[] buffer) : IWriter
         buffer[Position] = value;
         Position += ByteLen;
     }
-    /// <summary>
-    /// Writes a char
-    /// </summary>
-    public void Write(char value)
-    {
-        if (Position + CharLen > Buffer.Length)
-        {
-            Position += CharLen;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-            throw ex;
-        }
-
-        Span<byte> bytes = stackalloc byte[CharLen];
-        if (!BitConverter.TryWriteBytes(bytes, value)) {
-            Position += CharLen;
-            var ex = new Exception($"Failed to write char bytes to span: {Position}, {Buffer.Length}");
-            throw ex;
-        }
-        
-        //Write it backwards cos its BIG Endian
-        var buffer = Buffer.AsSpan();
-        buffer[Position] = bytes[1];
-        buffer[Position + 1] = bytes[0];
-        Position += CharLen;
-    }
+    
+    //Doesn't work properly
+    //public void Write(char value)
+    //{
+    //    if (Position + CharLen > Buffer.Length)
+    //    {
+    //        Position += CharLen;
+    //        var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
+    //        throw ex;
+    //    }
+    //    Span<byte> bytes = stackalloc byte[CharLen];
+    //    if (!BitConverter.TryWriteBytes(bytes, value)) {
+    //        Position += CharLen;
+    //        var ex = new Exception($"Failed to write char bytes to span: {Position}, {Buffer.Length}");
+    //        throw ex;
+    //    }
+    //    
+    //    //Write it backwards cos its BIG Endian
+    //    var buffer = Buffer.AsSpan();
+    //    buffer[Position] = bytes[1];
+    //    buffer[Position + 1] = bytes[0];
+    //    Position += CharLen;
+    //}
 
     /// <summary>
     /// Writes a bool
@@ -237,46 +235,58 @@ public class WriterBig(byte[] buffer) : IWriter
         Position += DoubleLen;
     }
     /// <summary>
-    /// Writes a string using ushort for length of the string
+    /// Writes a string using short for length of the string
     /// </summary>
-    public void Write(string value)
-    {
-        var bytes = Encoding.UTF8.GetBytes(value);
-        Write((ushort)bytes.Length);
-        if (bytes.Length == 0)
+    public void WriteString(ReadOnlySpan<char> value) {
+        if (value.Length == 0) {
+            Write((ushort)0);
             return;
-        
-        if (Position + bytes.Length > Buffer.Length)
-        {
-            Position += bytes.Length;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-            throw ex;
         }
 
+        const int maxStackLimit = 1024;
+        var length = value.Length * CharLen;
+        var bytes = length <= maxStackLimit ? stackalloc byte[length] : new byte[length];
+        
+        if (!Encoding.UTF8.TryGetBytes(value, bytes, out var bytesWritten))
+            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {bytesWritten}");
+        
+        Write((ushort)value.Length);
+        var start = Position;
+        Position += bytesWritten;
+        
+        if (Position + bytesWritten > Buffer.Length)
+            throw new ArgumentOutOfRangeException($"Writer attempted to write out of bounds from: {start} to: {Position} | {bytesWritten}");
+        
         var buffer = Buffer.AsSpan();
-        bytes.CopyTo(buffer[Position..]);
-        Position += bytes.Length;
+        for (var i = 0; i < bytesWritten; i++)
+            buffer[start + i] = bytes[i];
     }
+    
     /// <summary>
-    /// Writes a string using int for the length of the string
+    /// Writes a string using short for length of the string
     /// </summary>
-    public void WriteUtf16(string value)
-    {
-        var bytes = Encoding.UTF8.GetBytes(value);
-        Write(bytes.Length);
-        if (bytes.Length == 0)
+    public void WriteStringInt(ReadOnlySpan<char> value) {
+        if (value.Length == 0) {
+            Write(0);
             return;
-        
-        if (Position + bytes.Length > Buffer.Length)
-        {
-            Position += bytes.Length;
-            var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-            throw ex;
         }
 
+        const int maxStackLimit = 1024;
+        var length = value.Length * CharLen;
+        var bytes = length <= maxStackLimit ? stackalloc byte[length] : new byte[length];
+        
+        if (!Encoding.UTF8.TryGetBytes(value, bytes, out var bytesWritten))
+            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {bytesWritten}");
+        
+        Write(value.Length);
+        var start = Position;
+        Position += bytesWritten;
+        
+        if (start + bytesWritten > Buffer.Length)
+            throw new ArgumentOutOfRangeException($"Writer attempted to write out of bounds from: {start} to: {Position} | {bytesWritten}");
+        
         var buffer = Buffer.AsSpan();
-        var b = Buffer.AsSpan();
-        bytes.CopyTo(b[Position..]);
-        Position += bytes.Length;
+        for (var i = 0; i < bytesWritten; i++)
+            buffer[start + i] = bytes[i];
     }
 }

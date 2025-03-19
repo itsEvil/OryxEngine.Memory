@@ -9,7 +9,6 @@ public interface IWriter
     public void SetPosition(int position);
     public void Write(byte value);
     public void Write(bool value);
-    public void Write(char value);
     public void Write(ushort value);
     public void Write(short value);
     public void Write(uint value);
@@ -18,6 +17,6 @@ public interface IWriter
     public void Write(double value);
     public void Write(ulong value);
     public void Write(long value);
-    public void Write(string value);
-    public void WriteUtf16(string value);
+    public void WriteString(ReadOnlySpan<char> value);
+    public void WriteStringInt(ReadOnlySpan<char> value);
 }

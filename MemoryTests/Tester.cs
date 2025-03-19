@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using MemoryTools;
 
 namespace MemoryTests;
@@ -40,6 +42,7 @@ public class Tester {
     }
     private static void Write(Writer w)
     {
+        _lastWriterPosition = 0;
         w.Write(byte.MinValue);
         w.Write(byte.MaxValue);
         w.Write((byte)128);
@@ -48,17 +51,12 @@ public class Tester {
         
         w.Write(false);
         w.Write(true);
-        
         PrintPosition(w);
         
-        w.Write(char.MinValue);
-        w.Write(char.MaxValue);
-        w.Write('A');
-        
+        w.WriteString("This is a string using ushort as length");
         PrintPosition(w);
         
-        w.Write("This is a string");
-        
+        w.WriteStringInt("This is a string using int as length");
         PrintPosition(w);
         
         w.Write(short.MinValue);
@@ -113,6 +111,7 @@ public class Tester {
     }
     private static void Read(Reader r)
     {
+        _lastReaderPosition = 0;
         var byte0 = r.ReadByte();
         var byte1 = r.ReadByte();
         var byte2 = r.ReadByte();
@@ -124,14 +123,9 @@ public class Tester {
         
         PrintPosition(r);
         
-        var char0 = r.ReadChar();
-        var char1 = r.ReadChar();
-        var char2 = r.ReadChar();
-
+        var ushortString = r.ReadString();
         PrintPosition(r);
-        
-        var thisIsAString = r.ReadUtf8Short();
-                
+        var intString = r.ReadStringInt();
         PrintPosition(r);
         
         var short0 = r.ReadInt16();
@@ -191,11 +185,14 @@ public class Tester {
         Assert(bool0, false);
         Assert(bool1, true);
         
-        Assert(char0, char.MinValue);
-        Assert(char1, char.MaxValue);
-        Assert(char2, 'A');
+        PrintPosition(r);
+        Assert(ushortString, "This is a string using ushort as length");
+        PrintPosition(r);
+        Assert(intString, "This is a string using int as length");
+        PrintPosition(r);
         
-        Assert(thisIsAString, "This is a string");
+        //PrintBytes(thisIsAString);
+        //PrintBytes("This is a string");
         
         Assert(short0, short.MinValue);
         Assert(short1, short.MaxValue);
@@ -230,13 +227,34 @@ public class Tester {
         Assert(double2, 10.1);
     }
 
-    private static void PrintPosition(Reader r, [CallerLineNumber] int line = 0)
+    private static void PrintBytes(char c)
     {
-        Console.WriteLine("Position: {0} at {1}", r.Position, line);
+        Span<byte> bytes = stackalloc byte[2];
+        BitConverter.TryWriteBytes(bytes, c);
+
+        var sb = new StringBuilder();
+        foreach (var b in bytes)
+        {
+            sb.Append(b);
+            sb.Append(',');
+        }
+        
+        Console.WriteLine("Bytes: {0}", sb);
     }
-    private static void PrintPosition(Writer w, [CallerLineNumber] int line = 0)
-    {
-        Console.WriteLine("Position: {0} at {1}", w.Position, line);
+    private static void PrintBytes(string value) {
+        var bytes = Encoding.UTF8.GetBytes(value);
+        Console.WriteLine("Bytes: {0}", string.Join(',', bytes));
+    }
+
+    private static int _lastReaderPosition = 0;
+    private static int _lastWriterPosition = 0;
+    private static void PrintPosition(Reader r, [CallerLineNumber] int line = 0) {
+        Console.WriteLine("Position: {0} at line {1}, difference: {2}", r.Position, line, r.Position - _lastReaderPosition);
+        _lastReaderPosition = r.Position;
+    }
+    private static void PrintPosition(Writer w, [CallerLineNumber] int line = 0) {
+        Console.WriteLine("Position: {0} at {1}, difference: {2}", w.Position, line, w.Position - _lastWriterPosition);
+        _lastWriterPosition = w.Position;
     }
     private static void Assert(byte value, byte expected) {
         Console.WriteLine("Byte value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
@@ -272,6 +290,6 @@ public class Tester {
         Console.WriteLine("Double value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
     }
     private static void Assert(string value, string expected) {
-        Console.WriteLine("String value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
+        Console.WriteLine("String value: '{0}', Expected: '{1}', Is Same: {2}", value, expected, string.Equals(value, expected));
     }
 }

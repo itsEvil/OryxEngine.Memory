@@ -20,13 +20,16 @@ public class Reader(EndianMode mode, byte[] buffer) : IReader {
             new ReaderLittle(buffer) : new ReaderBig(buffer);
     public readonly EndianMode Mode = mode;
     public byte[] Buffer => _reader.Buffer;
-    public int Position => _reader.Position;
+    public int Position
+    {
+        get => _reader.Position;
+        set => _reader.Position = value;
+    }
+
     public int Length => _reader.Length;
     public void Reset(int length) => _reader.Reset(length);
-    public char PeekChar() => _reader.PeekChar();
     public byte PeekByte() => _reader.PeekByte();
     public byte ReadByte() => _reader.ReadByte();
-    public char ReadChar() => _reader.ReadChar();
     public bool ReadBoolean() => _reader.ReadBoolean();
     public short ReadInt16() => _reader.ReadInt16();
     public ushort ReadUInt16() => _reader.ReadUInt16();
@@ -36,6 +39,6 @@ public class Reader(EndianMode mode, byte[] buffer) : IReader {
     public ulong ReadUInt64() => _reader.ReadUInt64();
     public float ReadFloat() => _reader.ReadFloat();
     public double ReadDouble() => _reader.ReadDouble();
-    public string ReadUtf8Short() => _reader.ReadUtf8Short();
-    public string ReadUtf8Int() => _reader.ReadUtf8Int();
+    public string ReadString() => _reader.ReadString();
+    public string ReadStringInt() => _reader.ReadStringInt();
 }

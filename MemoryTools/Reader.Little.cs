@@ -4,47 +4,36 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MemoryTools;
-#if RELEASE
 public sealed class ReaderLittle : IReader
 {
     private const int ByteLen = sizeof(byte);
     private const int BoolLen = sizeof(bool);
-    private const int CharLen = sizeof(char);
     private const int ShortLen = sizeof(short);
     private const int IntLen = sizeof(int);
     private const int LongLen = sizeof(long);
     private const int FloatLen = sizeof(float);
     private const int DoubleLen = sizeof(double);
 
-    public int Position { get; private set; }
+    public int Position { get; set; }
 
     public int Length { get; private set; }
 
-    private readonly byte[] _buffer;
-    public byte[] Buffer => _buffer ?? [];
+    public byte[] Buffer { get; }
+
     public ReaderLittle(byte[] buffer)
     {
-        _buffer = buffer;
-        Length = _buffer.Length;
+        Buffer = buffer;
+        Length = Buffer.Length;
     }
     public void Reset(int length)
     {
         Length = length;
         Position = 0;
     }
-    public char PeekChar()
-    {
-        if (Position + CharLen <= Length) 
-            return (char)_buffer[Position];
-        
-        var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-        throw ex;
-
-    }
     public byte PeekByte()
     {
         if (Position + ByteLen <= Length) 
-            return _buffer[Position];
+            return Buffer[Position];
         
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
         throw ex;
@@ -53,29 +42,17 @@ public sealed class ReaderLittle : IReader
     public byte ReadByte()
     {
         if (Position + ByteLen <= Length) 
-            return _buffer[Position++];
+            return Buffer[Position++];
         
         Position++;
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
         throw ex;
-
     }
-    public char ReadChar()
-    {
-        if (Position + CharLen <= Length) {
-            var ret = (char)(_buffer[Position] + _buffer[Position + 1]); //Read it normally cos its little Endian
-            Position += CharLen;
-            return ret;
-        }
-        
-        var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-        throw ex;
-    }
-
+    
     public bool ReadBoolean()
     {
         if (Position + BoolLen <= Length) 
-            return _buffer[Position++] == 1;
+            return Buffer[Position++] == 1;
         
         Position++;
         var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
@@ -91,7 +68,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadInt16LittleEndian(_buffer.AsSpan()[Position..(Position + ShortLen)]);
+        var data = BinaryPrimitives.ReadInt16LittleEndian(Buffer.AsSpan()[Position..(Position + ShortLen)]);
         Position += ShortLen;
         return data;
     }
@@ -104,7 +81,8 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.AsSpan()[Position..(Position + ShortLen)]);
+        var span = Buffer.AsSpan(Position, ShortLen);
+        var data = BinaryPrimitives.ReadUInt16LittleEndian(span);
         Position += ShortLen;
         return data;
     }
@@ -117,7 +95,8 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadInt32LittleEndian(_buffer.AsSpan()[Position..(Position + IntLen)]);
+        var span = Buffer.AsSpan(Position,IntLen);
+        var data = BinaryPrimitives.ReadInt32LittleEndian(span);
         Position += IntLen;
         return data;
     }
@@ -130,7 +109,8 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.AsSpan()[Position..(Position + IntLen)]);
+        var span = Buffer.AsSpan(Position, IntLen);
+        var data = BinaryPrimitives.ReadUInt32LittleEndian(span);
         Position += IntLen;
         return data;
     }
@@ -144,7 +124,8 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadInt64LittleEndian(_buffer.AsSpan()[Position..(Position + LongLen)]);
+        var span = Buffer.AsSpan(Position, LongLen);
+        var data = BinaryPrimitives.ReadInt64LittleEndian(span);
         Position += LongLen;
         return data;
     }
@@ -157,8 +138,9 @@ public sealed class ReaderLittle : IReader
             var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
             throw ex;
         }
-
-        var data = BinaryPrimitives.ReadUInt64LittleEndian(_buffer.AsSpan()[Position..(Position + LongLen)]);
+        
+        var span = Buffer.AsSpan(Position, LongLen);
+        var data = BinaryPrimitives.ReadUInt64LittleEndian(span);
         Position += LongLen;
         return data;
     }
@@ -172,7 +154,8 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
         
-        var data = BitConverter.ToSingle(_buffer.AsSpan()[Position..(Position + FloatLen)]);
+        var span = Buffer.AsSpan(Position, FloatLen);
+        var data = BitConverter.ToSingle(span);
         Position += FloatLen;
         return data;
     }
@@ -185,68 +168,61 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
         
-        var data = BitConverter.ToDouble(_buffer.AsSpan()[Position..(Position + DoubleLen)]);
+        var span = Buffer.AsSpan(Position, DoubleLen);
+        var data = BitConverter.ToDouble(span);
         Position += DoubleLen;
         return data;
     }
     /// <summary>
-    /// Reads a <see cref="short"/> length then tries to read <see cref="string"/> using the length.
+    /// Reads a string using ushort for length of the string
     /// </summary>
-    public string ReadUtf8Short()
-    {
-        var length = ReadInt16();
-        switch (length)
-        {
-            case 0:
-                return "";
-            case < 0:
-            {
-                var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-                throw ex;
-            }
-        }
+    public string ReadString() {
+        var length = ReadUInt16();
+        if (length + Position > Length)
+            throw new ArgumentOutOfRangeException($"Length + Position is out of buffer bounds, {length} + {Position} > {Buffer.Length}");
+        
+        if (length == 0)
+            return "";
 
-
-        if (Position + length > Length)
-        {
-            Position += length;
-            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-            throw ex;
-        }
-
-        var data = Encoding.UTF8.GetString(_buffer[Position..(Position + length)]);
+        var r = Encoding.UTF8.GetString(Buffer, Position, length);
         Position += length;
-        return data;
+        return r;
+        
+        const int maxStackLimit = 512;
+        var chars = length <= maxStackLimit ? stackalloc char[length] : new char[length];
+        
+        var buffer = new ReadOnlySpan<byte>(Buffer, Position, length);
+        Position += length;
+        
+        if (Encoding.UTF8.TryGetChars(buffer, chars, out var written)) 
+            return string.Intern(chars.ToString());
+        
+        throw new ArgumentOutOfRangeException($"Reader failed to get chars at: {Position}, written chars: {written}, length: {length}");
     }
     /// <summary>
-    /// Reads a <see cref="int"/> length then tries to read <see cref="string"/> using the length.
+    /// Reads a string using ushort for length of the string
     /// </summary>
-    public string ReadUtf8Int()
-    {
+    public string ReadStringInt() {
         var length = ReadInt32();
-        switch (length)
-        {
-            case 0:
-                return "";
-            case < 0:
-            {
-                var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-                throw ex;
-            }
-        }
-
-
-        if (Position + length > Length)
-        {
-            Position += length;
-            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-            throw ex;
-        }
-
-        var data = Encoding.UTF8.GetString(_buffer[Position..(Position + length)]);
+        if (length + Position > Length)
+            throw new ArgumentOutOfRangeException($"Length + Position is out of buffer bounds, {length} + {Position} > {Buffer.Length}");
+        
+        if (length == 0)
+            return "";
+        
+        var r = Encoding.UTF8.GetString(Buffer, Position, length);
         Position += length;
-
-        return data;
+        return r;
+        
+        const int maxStackLimit = 512;
+        var chars = length <= maxStackLimit ? stackalloc char[length] : new char[length];
+        
+        var buffer = new ReadOnlySpan<byte>(Buffer, Position, length);
+        Position += length;
+        
+        if (Encoding.UTF8.TryGetChars(buffer, chars, out var written)) 
+            return string.Intern(chars.ToString());
+        
+        throw new ArgumentOutOfRangeException($"Reader failed to get chars at: {Position}, written chars: {written}, length: {length}");
     }
 }
-#endif

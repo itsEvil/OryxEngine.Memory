@@ -16,6 +16,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>memory, oryx engine </PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>

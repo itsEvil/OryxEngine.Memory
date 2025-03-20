@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using System.Text;
 // ReSharper disable once CheckNamespace
 namespace OryxEngine.Memory;
@@ -9,15 +10,9 @@ public sealed class ReaderLittle : IReader
     private const int ShortLen = sizeof(short);
     private const int IntLen = sizeof(int);
     private const int LongLen = sizeof(long);
-    private const int FloatLen = sizeof(float);
-    private const int DoubleLen = sizeof(double);
-
     public int Position { get; set; }
-
     public int Length { get; private set; }
-
     public byte[] Buffer { get; }
-
     public ReaderLittle(byte[] buffer)
     {
         Buffer = buffer;
@@ -66,7 +61,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var data = BinaryPrimitives.ReadInt16LittleEndian(Buffer.AsSpan()[Position..(Position + ShortLen)]);
+        var data = BinaryPrimitives.ReadInt16LittleEndian(GetSpan(ShortLen));
         Position += ShortLen;
         return data;
     }
@@ -79,8 +74,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var span = Buffer.AsSpan(Position, ShortLen);
-        var data = BinaryPrimitives.ReadUInt16LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt16LittleEndian(GetSpan(ShortLen));
         Position += ShortLen;
         return data;
     }
@@ -93,8 +87,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var span = Buffer.AsSpan(Position,IntLen);
-        var data = BinaryPrimitives.ReadInt32LittleEndian(span);
+        var data = BinaryPrimitives.ReadInt32LittleEndian(GetSpan(IntLen));
         Position += IntLen;
         return data;
     }
@@ -107,8 +100,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var span = Buffer.AsSpan(Position, IntLen);
-        var data = BinaryPrimitives.ReadUInt32LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt32LittleEndian(GetSpan(IntLen));
         Position += IntLen;
         return data;
     }
@@ -122,8 +114,7 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
 
-        var span = Buffer.AsSpan(Position, LongLen);
-        var data = BinaryPrimitives.ReadInt64LittleEndian(span);
+        var data = BinaryPrimitives.ReadInt64LittleEndian(GetSpan(LongLen));
         Position += LongLen;
         return data;
     }
@@ -137,44 +128,17 @@ public sealed class ReaderLittle : IReader
             throw ex;
         }
         
-        var span = Buffer.AsSpan(Position, LongLen);
-        var data = BinaryPrimitives.ReadUInt64LittleEndian(span);
+        var data = BinaryPrimitives.ReadUInt64LittleEndian(GetSpan(LongLen));
         Position += LongLen;
         return data;
     }
-
-    public float ReadFloat()
-    {
-        if (Position + FloatLen > Length)
-        {
-            Position += FloatLen;
-            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-            throw ex;
-        }
-        
-        var span = Buffer.AsSpan(Position, FloatLen);
-        var data = BitConverter.ToSingle(span);
-        Position += FloatLen;
-        return data;
-    }
-    public double ReadDouble()
-    {
-        if (Position + DoubleLen > Length)
-        {
-            Position += DoubleLen;
-            var ex = new Exception($"Receive buffer attempted to read out of bounds {Position}, {Length}");
-            throw ex;
-        }
-        
-        var span = Buffer.AsSpan(Position, DoubleLen);
-        var data = BitConverter.ToDouble(span);
-        Position += DoubleLen;
-        return data;
-    }
+    public float ReadFloat() => BitConverter.UInt32BitsToSingle(ReadUInt32());
+    public double ReadDouble() => BitConverter.UInt64BitsToDouble(ReadUInt64());
     /// <summary>
     /// Reads a string using ushort for length of the string
     /// </summary>
-    public string ReadString() {
+    public string ReadString() 
+    {
         var length = ReadUInt16();
         if (length + Position > Length)
             throw new ArgumentOutOfRangeException($"Length + Position is out of buffer bounds, {length} + {Position} > {Buffer.Length}");
@@ -185,22 +149,12 @@ public sealed class ReaderLittle : IReader
         var r = Encoding.UTF8.GetString(Buffer, Position, length);
         Position += length;
         return r;
-        
-        const int maxStackLimit = 512;
-        var chars = length <= maxStackLimit ? stackalloc char[length] : new char[length];
-        
-        var buffer = new ReadOnlySpan<byte>(Buffer, Position, length);
-        Position += length;
-        
-        if (Encoding.UTF8.TryGetChars(buffer, chars, out var written)) 
-            return string.Intern(chars.ToString());
-        
-        throw new ArgumentOutOfRangeException($"Reader failed to get chars at: {Position}, written chars: {written}, length: {length}");
     }
     /// <summary>
     /// Reads a string using ushort for length of the string
     /// </summary>
-    public string ReadStringInt() {
+    public string ReadStringInt() 
+    {
         var length = ReadInt32();
         if (length + Position > Length)
             throw new ArgumentOutOfRangeException($"Length + Position is out of buffer bounds, {length} + {Position} > {Buffer.Length}");
@@ -211,16 +165,7 @@ public sealed class ReaderLittle : IReader
         var r = Encoding.UTF8.GetString(Buffer, Position, length);
         Position += length;
         return r;
-        
-        const int maxStackLimit = 512;
-        var chars = length <= maxStackLimit ? stackalloc char[length] : new char[length];
-        
-        var buffer = new ReadOnlySpan<byte>(Buffer, Position, length);
-        Position += length;
-        
-        if (Encoding.UTF8.TryGetChars(buffer, chars, out var written)) 
-            return string.Intern(chars.ToString());
-        
-        throw new ArgumentOutOfRangeException($"Reader failed to get chars at: {Position}, written chars: {written}, length: {length}");
     }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Span<byte> GetSpan(int length) => Buffer.AsSpan(Position, length);
 }

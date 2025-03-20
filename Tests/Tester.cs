@@ -1,6 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text;
-using OryxEngine.Memory;
+﻿using OryxEngine.Memory;
+using static Tests.Asserts;
 
 // ReSharper disable once CheckNamespace
 namespace Tests;
@@ -9,7 +8,6 @@ public class Tester {
     
     private readonly byte[] _bigData = new byte[0x10000];
     private readonly byte[] _littleData = new byte[0x10000];
-
     public Tester() {
         //Initialize our objects
         var bigReader = new Reader(EndianMode.Big, _bigData);
@@ -34,14 +32,12 @@ public class Tester {
     }
 
     private static void Run(Reader r, Writer w) {
-        Console.WriteLine("Reader Mode: {0}, Writer Mode: {1}", r.Mode, w.Mode);
-
         Write(w);
         Read(r);
     }
     private static void Write(Writer w)
     {
-        _lastWriterPosition = 0;
+        ResetPositions(WriterIndex);
         w.Write(byte.MinValue);
         w.Write(byte.MaxValue);
         w.Write((byte)128);
@@ -105,12 +101,10 @@ public class Tester {
         w.Write(10.1);
         
         PrintPosition(w);
-        
-        Console.WriteLine("Wrote {0} bytes to {1} buffer", w.Position, w.Mode);
     }
     private static void Read(Reader r)
     {
-        _lastReaderPosition = 0;
+        ResetPositions(ReaderIndex);
         var byte0 = r.ReadByte();
         var byte1 = r.ReadByte();
         var byte2 = r.ReadByte();
@@ -175,7 +169,7 @@ public class Tester {
         
         PrintPosition(r);
 
-        Console.WriteLine("Read {0} bytes from {1} buffer", r.Position, r.Mode);
+        Prefix = $"{r.Mode} | ";
         
         Assert(byte0, byte.MinValue);
         Assert(byte1, byte.MaxValue);
@@ -189,10 +183,7 @@ public class Tester {
         PrintPosition(r);
         Assert(intString, "This is a string using int as length");
         PrintPosition(r);
-        
-        //PrintBytes(thisIsAString);
-        //PrintBytes("This is a string");
-        
+
         Assert(short0, short.MinValue);
         Assert(short1, short.MaxValue);
         Assert(short2, (short)10);
@@ -224,71 +215,7 @@ public class Tester {
         Assert(double0, double.MinValue);
         Assert(double1, double.MaxValue);
         Assert(double2, 10.1);
-    }
 
-    private static void PrintBytes(char c)
-    {
-        Span<byte> bytes = stackalloc byte[2];
-        BitConverter.TryWriteBytes(bytes, c);
-
-        var sb = new StringBuilder();
-        foreach (var b in bytes)
-        {
-            sb.Append(b);
-            sb.Append(',');
-        }
-        
-        Console.WriteLine("Bytes: {0}", sb);
-    }
-    private static void PrintBytes(string value) {
-        var bytes = Encoding.UTF8.GetBytes(value);
-        Console.WriteLine("Bytes: {0}", string.Join(',', bytes));
-    }
-
-    private static int _lastReaderPosition = 0;
-    private static int _lastWriterPosition = 0;
-    private static void PrintPosition(Reader r, [CallerLineNumber] int line = 0) {
-        Console.WriteLine("Position: {0} at line {1}, difference: {2}", r.Position, line, r.Position - _lastReaderPosition);
-        _lastReaderPosition = r.Position;
-    }
-    private static void PrintPosition(Writer w, [CallerLineNumber] int line = 0) {
-        Console.WriteLine("Position: {0} at {1}, difference: {2}", w.Position, line, w.Position - _lastWriterPosition);
-        _lastWriterPosition = w.Position;
-    }
-    private static void Assert(byte value, byte expected) {
-        Console.WriteLine("Byte value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(bool value, bool expected) {
-        Console.WriteLine("Bool value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(char value, char expected) {
-        Console.WriteLine("Char value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(short value, short expected) {
-        Console.WriteLine("Short value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(ushort value, ushort expected) {
-        Console.WriteLine("Ushort value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(int value, int expected) {
-        Console.WriteLine("Int value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(uint value, uint expected) {
-        Console.WriteLine("UInt value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(long value, long expected) {
-        Console.WriteLine("Long value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(ulong value, ulong expected) {
-        Console.WriteLine("ULong value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(float value, float expected) {
-        Console.WriteLine("Float value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(double value, double expected) {
-        Console.WriteLine("Double value: {0}, Expected: {1}, Is Same: {2}", value, expected, value == expected);
-    }
-    private static void Assert(string value, string expected) {
-        Console.WriteLine("String value: '{0}', Expected: '{1}', Is Same: {2}", value, expected, string.Equals(value, expected));
+        PrintCounts();
     }
 }

@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 // ReSharper disable once CheckNamespace
@@ -32,34 +33,11 @@ public class WriterLittle(byte[] buffer) : IWriter
             var ex = new Exception($"Writer attempted to write out of bounds: {start}, {Buffer.Length}");
             throw ex;
         }
-        var buffer = Buffer.AsSpan();
-        buffer[start] = value;
+        
+        Buffer.AsSpan()[start] = value;
         Position += BoolLen;
     } 
     
-    //Doesn't work properly...
-    //public void Write(char value)
-    //{
-    //    if (Position + CharLen > Buffer.Length)
-    //    {
-    //        Position += CharLen;
-    //        var ex = new Exception($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-    //        throw ex;
-    //    }
-    //    Span<byte> bytes = stackalloc byte[CharLen];
-    //    if (!BitConverter.TryWriteBytes(bytes, value)) {
-    //        Position += CharLen;
-    //        var ex = new Exception($"Failed to write char bytes to span: {Position}, {Buffer.Length}");
-    //        throw ex;
-    //    }
-    //    
-    //    //Write it normally cos its Little Endian
-    //    var buffer = Buffer.AsSpan();
-    //    buffer[Position] = bytes[0];
-    //    buffer[Position + 1] = bytes[1];
-    //    Position += CharLen;
-    //}
-
     /// <summary>
     /// Writes a bool
     /// </summary>
@@ -71,8 +49,7 @@ public class WriterLittle(byte[] buffer) : IWriter
             throw ex;
         }
         
-        var buffer = Buffer.AsSpan();
-        buffer[start] = value ? (byte)1 : (byte)0;
+        Buffer.AsSpan()[start] = value ? (byte)1 : (byte)0;
         Position += BoolLen;
     }
 
@@ -88,8 +65,8 @@ public class WriterLittle(byte[] buffer) : IWriter
             var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {start}, {Buffer.Length}");
             throw ex;
         }
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteInt16LittleEndian(buffer[start..(start + ShortLen)], value);
+        
+        BinaryPrimitives.WriteInt16LittleEndian(GetSpan(ShortLen), value);
         Position += ShortLen;
     }
     /// <summary>
@@ -104,8 +81,8 @@ public class WriterLittle(byte[] buffer) : IWriter
             var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {start}, {Buffer.Length}");
             throw ex;
         }
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteUInt16LittleEndian(buffer[start..(start + ShortLen)], value);
+        
+        BinaryPrimitives.WriteUInt16LittleEndian(GetSpan(ShortLen), value);
         Position += ShortLen;
     }
     /// <summary>
@@ -121,8 +98,7 @@ public class WriterLittle(byte[] buffer) : IWriter
             throw ex;
         }
 
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteInt32LittleEndian(buffer[start..(start + IntLen)], value);
+        BinaryPrimitives.WriteInt32LittleEndian(GetSpan(IntLen), value);
         Position += IntLen;
     }
     /// <summary>
@@ -137,8 +113,8 @@ public class WriterLittle(byte[] buffer) : IWriter
             var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteUInt32LittleEndian(buffer[start..(start + IntLen)], value);
+        
+        BinaryPrimitives.WriteUInt32LittleEndian(GetSpan(IntLen), value);
         Position += IntLen;
     }
     /// <summary>
@@ -153,8 +129,8 @@ public class WriterLittle(byte[] buffer) : IWriter
             var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
             throw ex;
         }
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteInt64LittleEndian(buffer[start..(start + LongLen)], value);
+        
+        BinaryPrimitives.WriteInt64LittleEndian(GetSpan(LongLen), value);
         Position += LongLen;
     }
     /// <summary>
@@ -170,71 +146,17 @@ public class WriterLittle(byte[] buffer) : IWriter
             throw ex;
         }
 
-        var buffer = Buffer.AsSpan();
-        BinaryPrimitives.WriteUInt64LittleEndian(buffer[start..(start + LongLen)], value);
+        BinaryPrimitives.WriteUInt64LittleEndian(GetSpan(LongLen), value);
         Position += LongLen;
     }
     /// <summary>
     /// Writes a float
     /// </summary>
-    public void Write(float value)
-    {
-        var start = Position;
-        if (start + FloatLen > Buffer.Length) {
-            Position += FloatLen;
-            var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-            throw ex;
-        }
-        var buffer = Buffer.AsSpan();       
-        Span<byte> bytes = stackalloc byte[FloatLen];
-        if (!BitConverter.TryWriteBytes(bytes, value)) {
-            Position += FloatLen;
-            var ex = new Exception($"Writer failed to write float {value} to span! {Position}, {Buffer.Length} ");
-            throw ex;
-        }
-
-        buffer[start] = bytes[0];
-        buffer[start + 1] = bytes[1];
-        buffer[start + 2] = bytes[2];
-        buffer[start + 3] = bytes[3];
-
-        Position += FloatLen;
-    }
+    public void Write(float value) => Write(BitConverter.SingleToUInt32Bits(value));
     /// <summary>
     /// Writes a double
     /// </summary>
-    public void Write(double value)
-    {
-        var start = Position;
-        if (start + DoubleLen > Buffer.Length)
-        {
-            Position += DoubleLen;
-            var ex = new ArgumentOutOfRangeException($"Writer attempted to write out of bounds: {Position}, {Buffer.Length}");
-            throw ex;
-        }
-
-        var buffer = Buffer.AsSpan();
-        
-        Span<byte> bytes = stackalloc byte[DoubleLen];
-        if (!BitConverter.TryWriteBytes(bytes, value))
-        {
-            Position += DoubleLen;
-            var ex = new Exception($"Writer failed to write double {value} to span! {Position}, {Buffer.Length} ");
-            throw ex;
-        }
-
-        buffer[start] = bytes[0];
-        buffer[start + 1] = bytes[1];
-        buffer[start + 2] = bytes[2];
-        buffer[start + 3] = bytes[3];
-        buffer[start + 4] = bytes[4];
-        buffer[start + 5] = bytes[5];
-        buffer[start + 6] = bytes[6];
-        buffer[start + 7] = bytes[7];
-
-        Position += DoubleLen;
-    }
-    
+    public void Write(double value) => Write(BitConverter.DoubleToUInt64Bits(value));
     /// <summary>
     /// Writes a string using ushort for length of the string
     /// </summary>
@@ -243,24 +165,12 @@ public class WriterLittle(byte[] buffer) : IWriter
             Write((ushort)0);
             return;
         }
-
-        const int maxStackLimit = 1024;
-        var length = value.Length * 2;
-        var bytes = length <= maxStackLimit ? stackalloc byte[length] : new byte[length];
         
-        if (!Encoding.UTF8.TryGetBytes(value, bytes, out var bytesWritten))
-            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {bytesWritten}");
+        if (!Encoding.UTF8.TryGetBytes(value, Buffer.AsSpan(Position + ShortLen), out var length))
+            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {length}");
         
-        Write((ushort)value.Length);
-        var start = Position;
-        Position += bytesWritten;
-        
-        if (Position + bytesWritten > Buffer.Length)
-            throw new ArgumentOutOfRangeException($"Writer attempted to write out of bounds from: {start} to: {Position} | {bytesWritten}");
-        
-        var buffer = Buffer.AsSpan();
-        for (var i = 0; i < bytesWritten; i++)
-            buffer[start + i] = bytes[i];
+        Write((ushort)length);
+        Position += length;
     }
     
     /// <summary>
@@ -271,23 +181,13 @@ public class WriterLittle(byte[] buffer) : IWriter
             Write(0);
             return;
         }
-
-        const int maxStackLimit = 1024;
-        var length = value.Length * 2;
-        var bytes = length <= maxStackLimit ? stackalloc byte[length] : new byte[length];
         
-        if (!Encoding.UTF8.TryGetBytes(value, bytes, out var bytesWritten))
-            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {bytesWritten}");
+        if (!Encoding.UTF8.TryGetBytes(value, Buffer.AsSpan(Position + IntLen), out var length))
+            throw new ArgumentOutOfRangeException($"Writer failed to get bytes of: {value.ToString()} at: {Position}, written: {length}");
         
-        Write(value.Length);
-        var start = Position;
-        Position += bytesWritten;
-        
-        if (start + bytesWritten > Buffer.Length)
-            throw new ArgumentOutOfRangeException($"Writer attempted to write out of bounds from: {start} to: {Position} | {bytesWritten}");
-        
-        var buffer = Buffer.AsSpan();
-        for (var i = 0; i < bytesWritten; i++)
-            buffer[start + i] = bytes[i];
+        Write(length);
+        Position += length;
     }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Span<byte> GetSpan(int length) => Buffer.AsSpan(Position, length);
 }

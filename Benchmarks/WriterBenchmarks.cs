@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using OryxEngine.Memory;
+using OryxEngine.Memory.Optionals;
 
 // ReSharper disable once CheckNamespace
 namespace Benchmarks;

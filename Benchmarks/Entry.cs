@@ -6,7 +6,7 @@ public static class Entry {
     { 
         //Choose a benchmark to run
         //BenchmarkRunner.Run<WriterBenchmarks>();
-        //BenchmarkRunner.Run<ReaderBenchmarks>();
+        BenchmarkRunner.Run<ReaderBenchmarks>();
         //BenchmarkRunner.Run<ReaderBenchmarksStrings>();
     }
 }

@@ -38,7 +38,8 @@ public static class Asserts
         var bytes = Encoding.UTF8.GetBytes(value);
         Console.WriteLine("Bytes: {0}", string.Join(',', bytes));
     }
-    public static void PrintPosition(Reader r, [CallerLineNumber] int line = 0)
+    
+    public static void PrintPosition(OryxEngine.Memory.Optionals.Reader r, [CallerLineNumber] int line = 0)
     {
         if (!ShowPositions)
             return;
@@ -46,7 +47,23 @@ public static class Asserts
         Console.WriteLine("Position: {0} at line {1}, difference: {2}", r.Position, line, r.Position - LastPositions[ReaderIndex]);
         LastPositions[ReaderIndex] = r.Position;
     }
-    public static void PrintPosition(Writer w, [CallerLineNumber] int line = 0) {
+    public static void PrintPosition(OryxEngine.Memory.Optionals.Writer r, [CallerLineNumber] int line = 0)
+    {
+        if (!ShowPositions)
+            return;
+        
+        Console.WriteLine("Position: {0} at line {1}, difference: {2}", r.Position, line, r.Position - LastPositions[ReaderIndex]);
+        LastPositions[ReaderIndex] = r.Position;
+    }
+    public static void PrintPosition(OryxEngine.Memory.Reader r, [CallerLineNumber] int line = 0)
+    {
+        if (!ShowPositions)
+            return;
+        
+        Console.WriteLine("Position: {0} at line {1}, difference: {2}", r.Position, line, r.Position - LastPositions[ReaderIndex]);
+        LastPositions[ReaderIndex] = r.Position;
+    }
+    public static void PrintPosition(OryxEngine.Memory.Writer w, [CallerLineNumber] int line = 0) {
         if (!ShowPositions)
             return;
         

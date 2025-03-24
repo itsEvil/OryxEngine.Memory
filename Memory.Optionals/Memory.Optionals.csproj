@@ -4,13 +4,10 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <OutputType>Exe</OutputType>
-        <RootNamespace>MemoryTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Memory.Optionals\Memory.Optionals.csproj" />
-      <ProjectReference Include="..\Memory\Memory.csproj" />
+      <PackageReference Include="OryxEngine.Optionals" Version="1.1.0" />
     </ItemGroup>
 
 </Project>

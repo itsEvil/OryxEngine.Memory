@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memory.Optionals", "Memory.Optionals\Memory.Optionals.csproj", "{A27E6824-7DBC-4D9A-B743-162DEE361542}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90E11BCB-E272-4E22-8AF1-DAFE907ED4B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A27E6824-7DBC-4D9A-B743-162DEE361542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27E6824-7DBC-4D9A-B743-162DEE361542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27E6824-7DBC-4D9A-B743-162DEE361542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27E6824-7DBC-4D9A-B743-162DEE361542}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,11 +4,11 @@ using static Tests.Asserts;
 // ReSharper disable once CheckNamespace
 namespace Tests;
 
-public class Tester {
+public class TesterExceptions {
     
     private readonly byte[] _bigData = new byte[0x10000];
     private readonly byte[] _littleData = new byte[0x10000];
-    public Tester() {
+    public TesterExceptions() {
         //Initialize our objects
         var bigReader = new Reader(EndianMode.Big, _bigData);
         var littleReader = new Reader(EndianMode.Little, _littleData);

@@ -1,10 +1,5 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace OryxEngine.Memory;
-public enum EndianMode
-{
-    Little,
-    Big,
-}
 /// <summary>
 /// Wrapper class for a binary reader
 /// </summary>

@@ -2,10 +2,9 @@
 A module from Oryx Engine used to write and read data from a byte buffer.
 Made in .NET 9.
 
-### How to use?
-- Clone Memory folder into wanted location
-- Create a new Reader/Writer and assign a buffer to it.
-- Use the IReader/IWriter functions to write data to or read data from the buffer.
+### (Easy) How to use?
+- Download the Nuget
+- Add `using OryxEngine.Memory.Optionals;` in your source code
 
 ### Notes
 - This package works as a dropping replacement for OryxEngine.Memory with only a few changes

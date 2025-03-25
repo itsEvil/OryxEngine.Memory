@@ -13,8 +13,6 @@ public static class Errors {
     public static readonly ErrorDetailed OutOfBoundsErrorUInt32 = OutOfBounds + "UInt";
     public static readonly ErrorDetailed OutOfBoundsErrorInt64 = OutOfBounds + "Long";
     public static readonly ErrorDetailed OutOfBoundsErrorUInt64 = OutOfBounds + "ULong";
-    public static readonly ErrorDetailed OutOfBoundsErrorFloat = OutOfBounds + "Float";
-    public static readonly ErrorDetailed OutOfBoundsErrorDouble = OutOfBounds + "Double";
     public static readonly ErrorDetailed OutOfBoundsErrorString = OutOfBounds + "String";
     public static readonly ErrorDetailed OutOfBoundsErrorStringInt = OutOfBounds + "StringInt";
 }

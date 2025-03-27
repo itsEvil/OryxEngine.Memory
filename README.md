@@ -34,4 +34,4 @@ private static void Main(string[] args) {
 }
 ```
 
-Nuget Link: https://www.nuget.org/packages/OryxEngine.Memory/1.1.0
+Nuget Link: https://www.nuget.org/packages/OryxEngine.Memory/1.2.0
